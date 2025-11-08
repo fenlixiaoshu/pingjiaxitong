@@ -1,11 +1,466 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-  <title>我的第一个网页</title>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>启思顿学生评价系统</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Microsoft YaHei', 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 40px;
+      padding: 30px 0;
+    }
+
+    .header-logo {
+      max-width: 300px;
+      height: auto;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+    }
+
+    .header h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .header p {
+      font-size: 1.2em;
+      opacity: 0.9;
+    }
+
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .card h2 {
+      color: #667eea;
+      margin-bottom: 20px;
+      font-size: 1.5em;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 150px;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      width: 100%;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .comments-section {
+      grid-column: 1 / -1;
+    }
+
+    .comments-list {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .comment-item {
+      background: #f8f9fa;
+      border-left: 4px solid #667eea;
+      padding: 20px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      transition: transform 0.2s;
+    }
+
+    .comment-item:hover {
+      transform: translateX(5px);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .comment-student {
+      font-weight: 600;
+      color: #667eea;
+      font-size: 1.1em;
+    }
+
+    .comment-meta {
+      color: #666;
+      font-size: 0.9em;
+    }
+
+    .comment-content {
+      color: #333;
+      line-height: 1.6;
+      margin-top: 10px;
+      white-space: pre-wrap;
+    }
+
+    .comment-grade {
+      display: inline-block;
+      background: #667eea;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      margin-left: 10px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+
+    .empty-state::before {
+      content: "📝";
+      font-size: 3em;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .stats {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      flex: 1;
+      min-width: 120px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2em;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 0.9em;
+      opacity: 0.9;
+    }
+
+    .delete-btn {
+      background: #ff4757;
+      color: white;
+      border: none;
+      padding: 5px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9em;
+      margin-top: 10px;
+    }
+
+    .delete-btn:hover {
+      background: #ff3838;
+    }
+  </style>
 </head>
 <body>
-  <h1>欢迎来到我的网站！</h1>
-  <p>damndamn</p>
+  <div class="container">
+    <div class="header">
+      <img src="logo.png" alt="启思顿学生评价系统" class="header-logo">
+      <h1>启思顿学生评价系统</h1>
+      <p>记录和管理学生评语</p>
+    </div>
+
+    <div class="main-content">
+      <div class="card">
+        <h2>📝 添加新评语</h2>
+        <form id="commentForm">
+          <div class="form-group">
+            <label for="studentName">学生姓名 *</label>
+            <input type="text" id="studentName" required placeholder="请输入学生姓名">
+          </div>
+
+          <div class="form-group">
+            <label for="studentClass">班级</label>
+            <input type="text" id="studentClass" placeholder="例如：三年级一班">
+          </div>
+
+          <div class="form-group">
+            <label for="subject">学科</label>
+            <select id="subject">
+              <option value="">请选择学科</option>
+              <option value="语文">语文</option>
+              <option value="数学">数学</option>
+              <option value="英语">英语</option>
+              <option value="科学">科学</option>
+              <option value="其他">其他</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="grade">评分等级</label>
+            <select id="grade">
+              <option value="">请选择等级</option>
+              <option value="优秀">优秀</option>
+              <option value="良好">良好</option>
+              <option value="中等">中等</option>
+              <option value="需改进">需改进</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="comment">评语内容 *</label>
+            <textarea id="comment" required placeholder="请输入详细的评语内容..."></textarea>
+          </div>
+
+          <button type="submit" class="btn">提交评语</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>📊 统计信息</h2>
+        <div class="stats">
+          <div class="stat-item">
+            <div class="stat-number" id="totalComments">0</div>
+            <div class="stat-label">总评语数</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" id="totalStudents">0</div>
+            <div class="stat-label">学生人数</div>
+          </div>
+        </div>
+        <div style="margin-top: 20px;">
+          <button class="btn" onclick="exportData()" style="background: #2ecc71;">导出数据</button>
+          <button class="btn" onclick="clearAll()" style="background: #e74c3c; margin-top: 10px;">清空所有数据</button>
+        </div>
+      </div>
+
+      <div class="card comments-section">
+        <h2>📋 评语列表</h2>
+        <div id="commentsList" class="comments-list">
+          <div class="empty-state">暂无评语，请添加第一条评语</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 从本地存储加载数据
+    let comments = JSON.parse(localStorage.getItem('teacherComments')) || [];
+
+    // 页面加载时显示评语
+    document.addEventListener('DOMContentLoaded', function() {
+      displayComments();
+      updateStats();
+    });
+
+    // 表单提交处理
+    document.getElementById('commentForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const studentName = document.getElementById('studentName').value.trim();
+      const studentClass = document.getElementById('studentClass').value.trim();
+      const subject = document.getElementById('subject').value;
+      const grade = document.getElementById('grade').value;
+      const comment = document.getElementById('comment').value.trim();
+
+      if (!studentName || !comment) {
+        alert('请填写学生姓名和评语内容！');
+        return;
+      }
+
+      const newComment = {
+        id: Date.now(),
+        studentName: studentName,
+        studentClass: studentClass,
+        subject: subject,
+        grade: grade,
+        comment: comment,
+        date: new Date().toLocaleString('zh-CN')
+      };
+
+      comments.unshift(newComment); // 添加到开头
+      saveComments();
+      displayComments();
+      updateStats();
+      
+      // 重置表单
+      this.reset();
+      
+      // 显示成功提示
+      alert('评语添加成功！');
+    });
+
+    // 显示评语列表
+    function displayComments() {
+      const commentsList = document.getElementById('commentsList');
+      
+      if (comments.length === 0) {
+        commentsList.innerHTML = '<div class="empty-state">暂无评语，请添加第一条评语</div>';
+        return;
+      }
+
+      commentsList.innerHTML = comments.map(comment => `
+        <div class="comment-item">
+          <div class="comment-header">
+            <div>
+              <span class="comment-student">${escapeHtml(comment.studentName)}</span>
+              ${comment.grade ? `<span class="comment-grade">${escapeHtml(comment.grade)}</span>` : ''}
+            </div>
+            <div class="comment-meta">
+              ${comment.date}
+            </div>
+          </div>
+          ${comment.studentClass ? `<div class="comment-meta">班级：${escapeHtml(comment.studentClass)}</div>` : ''}
+          ${comment.subject ? `<div class="comment-meta">学科：${escapeHtml(comment.subject)}</div>` : ''}
+          <div class="comment-content">${escapeHtml(comment.comment)}</div>
+          <button class="delete-btn" onclick="deleteComment(${comment.id})">删除</button>
+        </div>
+      `).join('');
+    }
+
+    // 删除评语
+    function deleteComment(id) {
+      if (confirm('确定要删除这条评语吗？')) {
+        comments = comments.filter(comment => comment.id !== id);
+        saveComments();
+        displayComments();
+        updateStats();
+      }
+    }
+
+    // 更新统计信息
+    function updateStats() {
+      document.getElementById('totalComments').textContent = comments.length;
+      const uniqueStudents = new Set(comments.map(c => c.studentName));
+      document.getElementById('totalStudents').textContent = uniqueStudents.size;
+    }
+
+    // 保存到本地存储
+    function saveComments() {
+      localStorage.setItem('teacherComments', JSON.stringify(comments));
+    }
+
+    // 导出数据
+    function exportData() {
+      if (comments.length === 0) {
+        alert('暂无数据可导出！');
+        return;
+      }
+
+      const dataStr = JSON.stringify(comments, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `评语数据_${new Date().toISOString().split('T')[0]}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // 清空所有数据
+    function clearAll() {
+      if (confirm('确定要清空所有数据吗？此操作不可恢复！')) {
+        comments = [];
+        saveComments();
+        displayComments();
+        updateStats();
+        alert('所有数据已清空！');
+      }
+    }
+
+    // HTML转义，防止XSS攻击
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
 </body>
 </html>
